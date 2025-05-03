@@ -1,8 +1,19 @@
-/*
+ul {
+    list-style-type: none;
+    margin: 2em 0 !important;
+    padding: 0;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+#add-task-view {
+    padding: 0 2em;
+}
 
-If your plugin does not need CSS, delete this file.
-
-*/
+#add-btn {
+    margin-left: 2em;
+}
+#start-button {
+    margin-top: 2em;
+}
+.task-list li {
+    margin: 1em;
+}

@@ -1,7 +1,9 @@
-import { App, Plugin, PluginSettingTab, Setting, ItemView, WorkspaceLeaf } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, ItemView, WorkspaceLeaf, setIcon, IconName } from 'obsidian';
 import * as React from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import TimerView from "./views/TimerView"
+// import TimerView from "./views/TimerView"
+import AddTasksView from "./views/AddTasksView"
+import TimerView from 'views/TimerView';
 
 interface PomodoroTimerSettings {
 	mySetting: string;
@@ -11,7 +13,41 @@ const DEFAULT_SETTINGS: PomodoroTimerSettings = {
 	mySetting: 'default'
 }
 
-const TIMER_VIEW_NAME = "timer-view"
+// View Types
+export const ADD_TASKS_VIEW_TYPE = "add-tasks-view"
+export const TIMER_VIEW_TYPE = "timer-view"
+
+class ADD_TASKS_VIEW extends ItemView {
+	root: Root | null = null;
+
+	constructor(leaf: WorkspaceLeaf) {
+		super(leaf);
+	}
+
+	getViewType() {
+		return ADD_TASKS_VIEW_TYPE;
+	}
+
+	// Name of view
+	getDisplayText() {
+		return 'Pomodoro Timer: Add Tasks';
+	}
+
+	getIcon(): string {
+		return "timer"
+	}
+
+	async onOpen() {
+		this.root = createRoot(this.containerEl.children[1]);
+		const domNode = React.createElement(AddTasksView, {app: this.app})
+
+		this.root.render(domNode);
+	}
+
+	async onClose() {
+		this.root?.unmount();
+	}
+}
 
 class TIMER_VIEW extends ItemView {
 	root: Root | null = null;
@@ -21,12 +57,16 @@ class TIMER_VIEW extends ItemView {
 	}
 
 	getViewType() {
-		return TIMER_VIEW_NAME;
+		return TIMER_VIEW_TYPE;
 	}
 
 	// Name of view
 	getDisplayText() {
 		return 'Pomodoro Timer';
+	}
+
+	getIcon(): string {
+		return "timer"
 	}
 
 	async onOpen() {
@@ -49,14 +89,15 @@ export default class PomodoroTimerPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// Adds a new view for the timer 
-		this.registerView(TIMER_VIEW_NAME, (leaf) => new TIMER_VIEW(leaf));
+		// Adds views
+		this.registerView(ADD_TASKS_VIEW_TYPE, (leaf) => new ADD_TASKS_VIEW(leaf));
+		this.registerView(TIMER_VIEW_TYPE, (leaf) => new TIMER_VIEW(leaf));
 
-		this.addRibbonIcon("timer", "Activate view", () => {
+		this.addRibbonIcon("timer", "Start Pomodoro Timer", () => {
 			this.activateView();
 		});
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
+		// adds settings tab
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
 	}
@@ -65,7 +106,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 		const { workspace } = this.app;
 
 		let leaf: WorkspaceLeaf | null = null;
-		const leaves = workspace.getLeavesOfType(TIMER_VIEW_NAME);
+		const leaves = workspace.getLeavesOfType(ADD_TASKS_VIEW_TYPE);
 
 		if (leaves.length > 0) {
 			// A leaf with our view already exists, use that
@@ -73,7 +114,7 @@ export default class PomodoroTimerPlugin extends Plugin {
 		} else {
 			// Our view could not be found in the workspace, create a new leaf in the right sidebar for it
 			leaf = workspace.getRightLeaf(false);
-			if (leaf) await leaf.setViewState({ type: TIMER_VIEW_NAME, active: true });
+			if (leaf) await leaf.setViewState({ type: ADD_TASKS_VIEW_TYPE, active: true });
 		}
 
 		// "Reveal" the leaf in case it is in a collapsed sidebar

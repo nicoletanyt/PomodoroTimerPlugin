@@ -1,0 +1,19 @@
+/* styles.css */
+ul {
+  list-style-type: none;
+  margin: 2em 0 !important;
+  padding: 0;
+}
+#add-task-view {
+  padding: 0 2em;
+}
+#add-btn {
+  margin-left: 2em;
+}
+#start-button {
+  margin-top: 2em;
+}
+.task-list li {
+  margin: 1em;
+}
+/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3R5bGVzLmNzcyJdLAogICJzb3VyY2VzQ29udGVudCI6IFsidWwge1xuICAgIGxpc3Qtc3R5bGUtdHlwZTogbm9uZTtcbiAgICBtYXJnaW46IDJlbSAwICFpbXBvcnRhbnQ7XG4gICAgcGFkZGluZzogMDtcbn1cblxuI2FkZC10YXNrLXZpZXcge1xuICAgIHBhZGRpbmc6IDAgMmVtO1xufVxuXG4jYWRkLWJ0biB7XG4gICAgbWFyZ2luLWxlZnQ6IDJlbTtcbn1cbiNzdGFydC1idXR0b24ge1xuICAgIG1hcmdpbi10b3A6IDJlbTtcbn1cbi50YXNrLWxpc3QgbGkge1xuICAgIG1hcmdpbjogMWVtO1xufSJdLAogICJtYXBwaW5ncyI6ICI7QUFBQTtBQUNJO0FBQ0E7QUFDQTtBQUFBO0FBR0o7QUFDSTtBQUFBO0FBR0o7QUFDSTtBQUFBO0FBRUo7QUFDSTtBQUFBO0FBRUo7QUFDSTtBQUFBOyIsCiAgIm5hbWVzIjogW10KfQo= */
