@@ -4,13 +4,19 @@ import { Root, createRoot } from 'react-dom/client';
 // import TimerView from "./views/TimerView"
 import AddTasksView from "./views/AddTasksView"
 import TimerView from 'views/TimerView';
+import { DEFAULT_QUOTES } from 'quotes';
 
-interface PomodoroTimerSettings {
-	mySetting: string;
+export interface PomodoroTimerSettings {
+	focus_time: number; // in minutes
 }
 
+type Quote = {
+  quote: string;
+  author: string;
+};
+
 const DEFAULT_SETTINGS: PomodoroTimerSettings = {
-	mySetting: 'default'
+	focus_time: 25
 }
 
 // View Types
@@ -51,9 +57,13 @@ class ADD_TASKS_VIEW extends ItemView {
 
 class TIMER_VIEW extends ItemView {
 	root: Root | null = null;
+	settings: PomodoroTimerSettings
+	quotes: Quote[]
 
-	constructor(leaf: WorkspaceLeaf) {
+	constructor(leaf: WorkspaceLeaf, settings: PomodoroTimerSettings, quotes: Quote[]) {
 		super(leaf);
+		this.settings = settings
+		this.quotes = this.quotes
 	}
 
 	getViewType() {
@@ -71,7 +81,9 @@ class TIMER_VIEW extends ItemView {
 
 	async onOpen() {
 		this.root = createRoot(this.containerEl.children[1]);
-		const domNode = React.createElement(TimerView)
+		const randomIndex = Math.floor(Math.random() * DEFAULT_QUOTES.length);
+
+		const domNode = React.createElement(TimerView, {settings: this.settings, quote: DEFAULT_QUOTES[randomIndex]})
 
 		this.root.render(domNode)
 	}
@@ -86,12 +98,14 @@ export default class PomodoroTimerPlugin extends Plugin {
 	root: Root | null = null;
 	containerEl: HTMLElement;
 
+	quotes: Quote[] = DEFAULT_QUOTES;
+
 	async onload() {
 		await this.loadSettings();
 
 		// Adds views
 		this.registerView(ADD_TASKS_VIEW_TYPE, (leaf) => new ADD_TASKS_VIEW(leaf));
-		this.registerView(TIMER_VIEW_TYPE, (leaf) => new TIMER_VIEW(leaf));
+		this.registerView(TIMER_VIEW_TYPE, (leaf) => new TIMER_VIEW(leaf, this.settings, this.quotes));
 
 		this.addRibbonIcon("timer", "Start Pomodoro Timer", () => {
 			this.activateView();
@@ -154,13 +168,13 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('Duration (in minutes) for timer: ')
+			.setDesc('Default is 25 minutes.')
 			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setPlaceholder('Enter the duration')
+				.setValue((this.plugin.settings.focus_time).toString())
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.focus_time = parseInt(value);
 					await this.plugin.saveSettings();
 				}));
 	}
